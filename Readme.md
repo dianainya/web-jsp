@@ -3,7 +3,7 @@
 2. Сборка Web Application Archive (war) с помощью Maven. 
 3. Развертывание war на веб-сервере WildFly на локальной машине.
 4. Интеграция WildFly в Intellij IDEA.
-5. Развертывание на удаленном хосте helios. //todo
+5. Развертывание на удаленном хосте helios.
 
 ### Инициализация JSP-приложения
 1. Первым шагом создадим новый Maven проект в IntelliJ IDEA с архетипом webapp. <br>
@@ -95,3 +95,45 @@ mvn clean install
 ![](staff/add_deployments.jpg)
 4. Сохраняем конфигурацию. Теперь можно разворачивать приложения в среде разработки.<br>
 ![](staff/run_config.jpg)
+
+
+### Развертывание на удаленном хосте helios
+
+1. Закидываем WildFly в домашнюю директорию на helios.
+2. Открываем файл standalone.xml по пути _standalone/configuration/standalone.xml_. В этом файле меняем:
+---
+
+```
+ <interface name="public">
+      <inet-address value="${jboss.bind.address:127.0.0.1}" />
+    </interface>
+```
+на
+```
+<interface name="public">
+<any-address />
+</interface>
+```
+---
+
+```
+ <socket-binding name="http" port="${jboss.http.port:8080}" />
+ <socket-binding name="https" port="${jboss.https.port:443}"/>
+```
+на
+```
+ <socket-binding name="http" port="${jboss.http.port:<portbase>}"/>
+```
+! где **portbase** - число из гугл-журнала, также можно добавить к нему число от 1 до 99, т.к. portbase выдают с расчётом, что 99 портов, идущие после него, тоже ваши.
+
+---
+
+3. Подключимся к helios, пробросив порты с помощью команды:
+```
+ssh -p 2222 s******@helios.cs.ifmo.ru -L 8080:helios.cs.ifmo.ru:<portbase>
+```   
+аргумент ssh команды -L означает, что порт на локальном хосте должен быть перенаправлен на указанный хост и
+порт на удаленной стороне.
+
+4. Запустим сервер с помощью таких же команд как и на локальной машине.
+5. Переходим в браузере по url http://localhost:8080/war_name.
