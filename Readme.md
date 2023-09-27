@@ -123,6 +123,7 @@ mvn clean install
 на
 ```
  <socket-binding name="http" port="${jboss.http.port:<portbase>}"/>
+ <socket-binding name="https" port="${jboss.https.port:<portbase + n>}"/>
 ```
 ! где **portbase** - число из гугл-журнала, также можно добавить к нему число от 1 до 99, т.к. portbase выдают с расчётом, что 99 портов, идущие после него, тоже ваши.
 
@@ -137,3 +138,5 @@ ssh -p 2222 s******@helios.cs.ifmo.ru -L 8080:helios.cs.ifmo.ru:<portbase>
 
 4. Запустим сервер с помощью таких же команд как и на локальной машине.
 5. Переходим в браузере по url http://localhost:8080/war_name.
+
+! Если вы закидываете тот же WildFly, что и подключали в Intellij IDEA, то удалите тег ```<deployments>...</deployments>``` в _Standalone.xml_.
